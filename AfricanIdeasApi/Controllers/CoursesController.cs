@@ -1,5 +1,6 @@
 ﻿using AfricanIdeasApi.Structure.Data;
 using AfricanIdeasApi.Structure.Models;
+using CourseEnrollment.Structure.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -31,6 +32,26 @@ namespace CourseEnrollment.Controllers
                 .Where(e => e.StudentId == studentId)
                 .Select(e => new CourseDto { Id = e.Course.Id, Name = e.Course.Name })
                 .ToListAsync();
+        }
+        [HttpPost("Create Course")]
+        public IActionResult CreateCourse(CourseCreateDto dto)
+        {
+            if (string.IsNullOrWhiteSpace(dto.Name))
+                return BadRequest("Course name is required.");
+
+            // Check if course name already exists
+            if (_db.Courses.Any(c => c.Name == dto.Name))
+                return BadRequest("Course already exists.");
+
+            var course = new Course
+            {
+                Name = dto.Name
+            };
+
+            _db.Courses.Add(course);
+            _db.SaveChanges();
+
+            return Ok(new CourseDto { Id = course.Id, Name = course.Name });
         }
 
         [HttpPost("{courseId}/enroll/{studentId}")]
