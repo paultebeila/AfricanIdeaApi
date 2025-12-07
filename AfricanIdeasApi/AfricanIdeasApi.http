@@ -1,0 +1,6 @@
+@AfricanIdeasApi_HostAddress = http://localhost:5199
+
+GET {{AfricanIdeasApi_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
